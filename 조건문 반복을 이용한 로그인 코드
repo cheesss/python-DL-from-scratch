@@ -1,0 +1,12 @@
+input_id = input('id:')
+id = 'cho'
+input_password = input('password:')
+password = '2002'
+
+if input_id == id:
+  if input_password == password:
+    print('환영합니다')
+  else:
+    print('wrong password')
+else:
+  print('wrong id')
