@@ -19,11 +19,6 @@ def get_target_price(ticker):
     target = today_open + (yesterday_high - yesterday_low) * 0.5
     return target
 
-# 자정에 목표가 갱신하기
-now = datetime.datetime.now()
-mid = datetime.datetime(now.year, now.month, now.day) + datetime.timedelta(1)
-target_price = get_target_price("BTC")
-
 def buy_crypto_currency(ticker):
     if current_price > target_price:
         krw = bithumb.get_balance(ticker)[2]
@@ -36,6 +31,19 @@ def sell_crypto_currency(ticker):
     unit = bithumb.get_balance(ticker)[0]
     bithumb.sell_market_order(ticker, unit)
 
+def get_yesterday_ma5(ticker):
+    df = pybithumb.get_ohlcv(ticker)
+    close = df['close']
+    ma = close.rolling(window=5).mean()
+    return ma[-2]
+
+# 자정에 목표가 갱신하기
+now = datetime.datetime.now()
+mid = datetime.datetime(now.year, now.month, now.day) + datetime.timedelta(1)
+ma5 = get_yesterday_ma5("BTC")
+target_price = get_target_price("BTC")
+
+
 
 while True:
     try:
@@ -43,10 +51,11 @@ while True:
         if mid < now < mid + datetime.timedelta(seconds=10):
             target_price = get_target_price("BTC")
             mid = datetime.datetime(now.year, now.month, now.day) + datetime.timedelta(1)
+            ma5 = get_yesterday_ma5("BTC")
             sell_crypto_currency("BTC")
 
         current_price = pybithumb.get_current_price("BTC")
-        if current_price > target_price:
+        if (current_price > target_price) and (current_price > ma5):
             buy_crypto_currency("BTC")
     except:
         print("에러 발생")
