@@ -1,11 +1,13 @@
 import requests
-import matplotlib.pyplot as plt
-import pandas as pd
-import datetime
+import json
 
-url = "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=30&interval=daily"
-response = requests.get(url)
-data = response.json()
+endpoint = "https://api.binance.com/api/v3/ticker/24hr"
+symbol = "BTCUSDT"
 
+response = requests.get(endpoint, params={'symbol': symbol})
 
-market_cap_data = [(datetime.datetime.fromtimestamp(item[0]/1000).strftime('%Y-%m-%d'), item[1]) for item in data["market_caps"]]
+if response.status_code == 200:
+    data = json.loads(response.text)
+    print(f"Symbol: {data['symbol']}, PriceC: {data['priceChange']}")
+else:
+    print(f"Error: {response.status_code}, {response}")
