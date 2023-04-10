@@ -1,15 +1,11 @@
-import sys
-from PyQt5.QtWidgets import *
+import requests
+import matplotlib.pyplot as plt
+import pandas as pd
+import datetime
 
-class MyWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        #내장함수 super를 이용한다.
+url = "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=30&interval=daily"
+response = requests.get(url)
+data = response.json()
 
 
-app = QApplication(sys.argv)
-window = MyWindow()
-window.show()
-app.exec_()
-
-# x를 누를때까지 창이 꺼지지 않도록 해준다.
+market_cap_data = [(datetime.datetime.fromtimestamp(item[0]/1000).strftime('%Y-%m-%d'), item[1]) for item in data["market_caps"]]
