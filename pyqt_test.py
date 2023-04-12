@@ -1,13 +1,12 @@
-import requests
-import json
+from binance.client import Client
+import pprint
 
-endpoint = "https://api.binance.com/api/v3/ticker/24hr"
-symbol = "BTCUSDT"
+api = {
+    'api_key' : 'kShelbMozw975QVjLBab0TyDrc079ttlxrXVpCOjBYdd9Dh56WvX5w1Qa7at7Ndj',
+    'api_secret': '9Ksh3kGeksXikcMvFvz80jhAwlqDT0KvrlRNShwgzNExYgJC04NXDH8l3sYujhy0'
+}
 
-response = requests.get(endpoint, params={'symbol': symbol})
+client = Client(api_key = api.get("api_key"), api_secret = api.get("api_secret"))
 
-if response.status_code == 200:
-    data = json.loads(response.text)
-    print(f"Symbol: {data['symbol']}, PriceC: {data['priceChange']}")
-else:
-    print(f"Error: {response.status_code}, {response}")
+tickers = client.get_ticker()
+pprint.pprint(tickers[0]['symbol'])
